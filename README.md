@@ -2,11 +2,11 @@
 
 The Dark Energy Spectroscopic Instrument (DESI) is carrying out a five-year spectroscopic survey designed to map the large-scale structure of the Universe and obtain spectra for millions of galaxies and quasars over a wide redshift range. We present a value-added catalog of spectral properties for 1,717,774 unique quasars (1,774,723 spectra) in the DESI Data Release 1. Using the PyQSOFit code, we perform a uniform decomposition of the continuum, host galaxy (at $z<1$), and iron emission, and measure the line properties of the major broad and narrow emission lines from Ly $\alpha$ to H $\alpha$, along with single-epoch black hole masses (from H $\beta$, MgII, and CIV), bolometric luminosities, and Eddington ratios. We provide systemic redshifts that account for the intrinsic velocity shifts of individual lines; they agree with the DESI pipeline redshifts to within 500 km/s for 88.6% of the spectra, and are most useful at $z>1$ where the pipeline redshift is based on blueshifted high-ionization lines. We also provide local fits to several optical coronal lines, including [NeV] $\lambda3426$. The catalog is intended as a community resource for studies of quasar demographics, black hole accretion, emission-line physics, and the connection between the broad-, coronal-, and narrow-line regions.
 
-arXiv: [XXXX.XXXXX](https://arxiv.org/abs/XXXX.XXXXX)
+arXiv: [2610.31416](https://arxiv.org/abs/2610.31416)
 
 ## Data access
 
-The catalog, the PyQSOFit output files of all spectra, and supplemental materials can be downloaded at: [FTP_LINK_PLACEHOLDER](FTP_LINK_PLACEHOLDER)
+The catalog, the PyQSOFit output files of all spectra, and supplemental materials can be downloaded at [our data server](https://ariel.astro.illinois.edu/qsofit/DESI_DR1/).
 
 The PyQSOFit output of each spectrum is named `op_<OBJID>.fits.gz`, where `OBJID` = `SURVEY-PROGRAM-HEALPIX-TARGETID` as in the catalog.
 
@@ -34,12 +34,12 @@ Requirements: `numpy`, `scipy`, `astropy`, `matplotlib`.
 
 ## PyQSOFit input parameters (`qsopar.fits`)
 
-| Extension | Content |
-| --- | --- |
-| `LINE_PRIORS` | line complexes and Gaussian components fitted globally: wavelength, fitting window, number of Gaussians, initial values and limits of scale and width, velocity offset limit, tied velocity/width/flux groups |
-| `CONTI_WINDOWS` | rest-frame wavelength windows used for the continuum fit |
-| `CONTI_PRIORS` | initial values and limits of the continuum (power law, polynomial, FeII, Balmer continuum) parameters |
-| `MEASURE_INFO` | wavelengths of the continuum luminosities and the optical FeII flux window |
+| Extension         | Content                                                                                                                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LINE_PRIORS`   | line complexes and Gaussian components fitted globally: wavelength, fitting window, number of Gaussians, initial values and limits of scale and width, velocity offset limit, tied velocity/width/flux groups |
+| `CONTI_WINDOWS` | rest-frame wavelength windows used for the continuum fit                                                                                                                                                      |
+| `CONTI_PRIORS`  | initial values and limits of the continuum (power law, polynomial, FeII, Balmer continuum) parameters                                                                                                         |
+| `MEASURE_INFO`  | wavelengths of the continuum luminosities and the optical FeII flux window                                                                                                                                    |
 
 The local fits of [NeV], [OII], CaII K and the coronal lines use a separate code (linear continuum + one Gaussian in a $\pm5000$ km/s window) and are not described by `qsopar.fits`.
 
@@ -48,179 +48,180 @@ The local fits of [NeV], [OII], CaII K and the coronal lines use a separate code
 The catalog has one binary-table extension. Each row is one DESI spectrum; an object observed in several survey/program combinations has more than one row (use `TARGETID` to select unique objects).
 
 Conventions:
+
 - Line columns are 6-element arrays: [peak wavelength (Å), flux ($10^{-17}$ erg s $^{-1}$ cm $^{-2}$), $\log L_{\rm line}$ (erg s $^{-1}$), FWHM (km s $^{-1}$), rest-frame EW (Å), 50% flux centroid wavelength (Å)]. The matching `_ERR` columns hold the 1σ uncertainties.
 - A line that is not fitted or not covered has all properties 0 and errors −1.
 - Missing values: `LOGL*` = −1; `LOGLBOL` and `LOGMBH*` = 0; `LOGLLEDD_RATIO` = −999; host-decomposition columns = −1 when no decomposition was done.
 - All quantities are measured in the rest frame defined by `Z_FIT`, on the Galactic-dereddened spectrum. Uncertainties come from 10 Monte Carlo trials.
 
-| Column | Format | Units | Description |
-| ---- | ---- | ---- | ------ |
-| `SURVEY` | STRING | | Survey name |
-| `PROGRAM` | STRING | | DESI program type |
-| `HEALPIX` | INT32 | | HEALPix number |
-| `TARGETID` | INT64 | | Unique identifier for each object observed by DESI |
-| `Z_AGNCAT` | DOUBLE | | Redshift provided by the DESI pipeline (AGN/QSO VAC) |
-| `Z_LYA` | DOUBLE | | Redshift from the Ly $\alpha$ Y1 BAO analysis (−1 if not available) |
-| `OBJID` | STRING | | Object identifier SURVEY-PROGRAM-HEALPIX-TARGETID; PyQSOFit output name |
-| `RA` | DOUBLE | degree | Right ascension (J2000) |
-| `DEC` | DOUBLE | degree | Declination (J2000) |
-| `IN_SDSS_DR16Q` | INT16 | | 1 if cross-matched to SDSS DR16Q within 0.5″, 0 otherwise |
-| `SDSS_DR16Q_OBJID` | STRING | | SDSS DR16Q object identifier (NA if no match) |
-| `Z_FIT` | DOUBLE | | Input redshift for PyQSOFit (DESI pipeline redshift, Ly $\alpha$ BAO redshift where available) |
-| `Z_SYS` | DOUBLE | | Final systemic redshift (equals `Z_FIT` where `Z_SYS_ERR` = −1) |
-| `Z_SYS_ERR` | DOUBLE | | Uncertainty in `Z_SYS` (−1 if `Z_FIT` is adopted) |
-| `Z_SYS_LINES` | DOUBLE[8] | | Systemic redshift from individual lines: broad H $\beta$, [OIII], CaII, [OII], MgII, broad CIII], CIV, SiIV |
-| `Z_SYS_LINES_ERR` | DOUBLE[8] | | Uncertainties in `Z_SYS_LINES` |
-| `SN_RATIO_CONTI` | DOUBLE | | Median S/N in the continuum windows |
-| `SNR_ALL_MEDIAN` | DOUBLE | | Median S/N per pixel over the full spectrum |
-| `EBV` | DOUBLE | mag | Milky Way extinction $E(B-V)$ from Schlegel et al. (1998) |
-| `CONTI_PARA` | DOUBLE[5] | | Best-fit continuum parameters: PL normalization, PL slope, and polynomial coefficients $a_0, a_1, a_2$ |
-| `CONTI_PARA_ERR` | DOUBLE[5] | | Uncertainties in `CONTI_PARA` |
-| `FE_UV_OPT_PARA` | DOUBLE[6] | | Best-fit UV and optical FeII template parameters: (normalization, FWHM, shift) for UV, then optical |
-| `FE_UV_OPT_PARA_ERR` | DOUBLE[6] | | Uncertainties in `FE_UV_OPT_PARA` |
-| `FE_UV_EW` | DOUBLE[2] | Å | Rest-frame EW of UV FeII within 2250–2650 Å, and its uncertainty |
-| `FE_OPT_EW` | DOUBLE[2] | Å | Rest-frame EW of optical FeII within 4434–4684 Å, and its uncertainty |
-| `LOGL1350` | DOUBLE | [erg s $^{-1}$] | Continuum luminosity $\log\lambda L_\lambda$ at rest-frame 1350 Å |
-| `LOGL1350_ERR` | DOUBLE | [erg s $^{-1}$] | Uncertainty in `LOGL1350` |
-| `LOGL1700` | DOUBLE | [erg s $^{-1}$] | ... at 1700 Å |
-| `LOGL1700_ERR` | DOUBLE | [erg s $^{-1}$] | ... |
-| `LOGL2500` | DOUBLE | [erg s $^{-1}$] | ... at 2500 Å |
-| `LOGL2500_ERR` | DOUBLE | [erg s $^{-1}$] | ... |
-| `LOGL3000` | DOUBLE | [erg s $^{-1}$] | ... at 3000 Å |
-| `LOGL3000_ERR` | DOUBLE | [erg s $^{-1}$] | ... |
-| `LOGL4200` | DOUBLE | [erg s $^{-1}$] | ... at 4200 Å (host-subtracted at $z<1$) |
-| `LOGL4200_ERR` | DOUBLE | [erg s $^{-1}$] | ... |
-| `LOGL5100` | DOUBLE | [erg s $^{-1}$] | ... at 5100 Å (host-subtracted at $z<1$) |
-| `LOGL5100_ERR` | DOUBLE | [erg s $^{-1}$] | ... |
-| `CONTI_FIT_STAT` | DOUBLE[2] | | Number of pixels and reduced $\chi^2$ of the continuum fit |
-| `FRAC_HOST_4200` | DOUBLE | | Host-galaxy fraction at rest-frame 4200 Å |
-| `FRAC_HOST_5100` | DOUBLE | | Host-galaxy fraction at rest-frame 5100 Å |
-| `DN4000` | DOUBLE | | $D_{\rm n}4000$ index of the host galaxy |
-| `HOST_DECOMP_PARA` | DOUBLE[5] | | Coefficients of the five galaxy eigenspectra used in the host decomposition |
-| | | Å, $10^{-17}$ erg s $^{-1}$ cm $^{-2}$, [erg s $^{-1}$], km s $^{-1}$, Å, Å | **Peak wavelength, flux, $\log L_{\rm line}$, FWHM, rest-frame EW, 50% flux centroid wavelength** |
-| `HALPHA` | DOUBLE[6] | | For the entire H $\alpha$ profile (narrow and broad combined) |
-| `HALPHA_BR` | DOUBLE[6] | | For the broad H $\alpha$ component |
-| `HALPHA_NA` | DOUBLE[6] | | For the narrow H $\alpha$ component |
-| `NII6549` | DOUBLE[6] | | For the narrow [NII] λ6549 component |
-| `NII6585` | DOUBLE[6] | | For the narrow [NII] λ6585 component |
-| `SII6718` | DOUBLE[6] | | For the narrow [SII] λ6718 component |
-| `SII6732` | DOUBLE[6] | | For the narrow [SII] λ6732 component |
-| `HBETA` | DOUBLE[6] | | For the entire H $\beta$ profile (narrow and broad combined) |
-| `HBETA_BR` | DOUBLE[6] | | For the broad H $\beta$ component |
-| `HBETA_NA` | DOUBLE[6] | | For the narrow H $\beta$ component ($z<1.02$ only) |
-| `HEII4687` | DOUBLE[6] | | For the entire HeII λ4687 profile (narrow and broad combined) |
-| `HEII4687_BR` | DOUBLE[6] | | For the broad HeII λ4687 component |
-| `OIII5007` | DOUBLE[6] | | For the entire [OIII] λ5007 profile (core and wing) |
-| `OIII5007C` | DOUBLE[6] | | For the core [OIII] λ5007 profile |
-| `OIII4960` | DOUBLE[6] | | For the entire [OIII] λ4960 profile (core and wing) |
-| `OIII4960C` | DOUBLE[6] | | For the core [OIII] λ4960 profile |
-| `HGAMMA` | DOUBLE[6] | | For the entire H $\gamma$ profile (narrow and broad combined) |
-| `HDELTA` | DOUBLE[6] | | For the entire H $\delta$ profile (narrow and broad combined) |
-| `MGII` | DOUBLE[6] | | For the entire MgII profile (narrow and broad combined) |
-| `MGII_BR` | DOUBLE[6] | | For the broad MgII component |
-| `CIII_BR` | DOUBLE[6] | | For the broad CIII] component |
-| `SIIII1892` | DOUBLE[6] | | For SiIII] λ1892 |
-| `ALIII1857` | DOUBLE[6] | | For AlIII λ1857 |
-| `NIII1750` | DOUBLE[6] | | For NIII] λ1750 |
-| `CIV` | DOUBLE[6] | | For the entire CIV profile |
-| `HEII1640` | DOUBLE[6] | | For the entire HeII λ1640 profile (narrow and broad combined) |
-| `HEII1640_BR` | DOUBLE[6] | | For the broad HeII λ1640 component |
-| `SIIV_OIV` | DOUBLE[6] | | For the 1400 Å complex (SiIV + OIV]) |
-| `OI1304` | DOUBLE[6] | | For OI λ1304 |
-| `LYA` | DOUBLE[6] | | For Ly $\alpha$ |
-| `NV1240` | DOUBLE[6] | | For NV λ1240 |
-| `NEV3346` | DOUBLE[6] | | Local fit (linear continuum + one Gaussian) of [NeV] λ3346 |
-| `NEV3426` | DOUBLE[6] | | Local fit of [NeV] λ3426 |
-| `FEVII3586` | DOUBLE[6] | | Local fit of [FeVII] λ3586 |
-| `OII3728` | DOUBLE[6] | | Local fit of [OII] λλ3727,3729 |
-| `FEVII3759` | DOUBLE[6] | | Local fit of [FeVII] λ3759 |
-| `CAII3934` | DOUBLE[6] | | Local fit of the CaII K absorption line (negative flux and EW) |
-| `FEXIV5303` | DOUBLE[6] | | Local fit of [FeXIV] λ5303 |
-| `FEVII5721` | DOUBLE[6] | | Local fit of [FeVII] λ5721 |
-| `FEVII6087` | DOUBLE[6] | | Local fit of [FeVII] λ6087 |
-| `FEX6374` | DOUBLE[6] | | Local fit of [FeX] λ6374 |
-| `SXII7611` | DOUBLE[6] | | Local fit of [SXII] λ7611 |
-| `FEXI7892` | DOUBLE[6] | | Local fit of [FeXI] λ7892 |
-| | | | **Uncertainties in the line properties above** |
-| `HALPHA_ERR` | DOUBLE[6] | | Uncertainties in `HALPHA` |
-| `HALPHA_BR_ERR` | DOUBLE[6] | | ... |
-| `HALPHA_NA_ERR` | DOUBLE[6] | | ... |
-| `NII6549_ERR` | DOUBLE[6] | | ... |
-| `NII6585_ERR` | DOUBLE[6] | | ... |
-| `SII6718_ERR` | DOUBLE[6] | | ... |
-| `SII6732_ERR` | DOUBLE[6] | | ... |
-| `HBETA_ERR` | DOUBLE[6] | | ... |
-| `HBETA_BR_ERR` | DOUBLE[6] | | ... |
-| `HBETA_NA_ERR` | DOUBLE[6] | | ... |
-| `HEII4687_ERR` | DOUBLE[6] | | ... |
-| `HEII4687_BR_ERR` | DOUBLE[6] | | ... |
-| `OIII5007_ERR` | DOUBLE[6] | | ... |
-| `OIII5007C_ERR` | DOUBLE[6] | | ... |
-| `OIII4960_ERR` | DOUBLE[6] | | ... |
-| `OIII4960C_ERR` | DOUBLE[6] | | ... |
-| `HGAMMA_ERR` | DOUBLE[6] | | ... |
-| `HDELTA_ERR` | DOUBLE[6] | | ... |
-| `MGII_ERR` | DOUBLE[6] | | ... |
-| `MGII_BR_ERR` | DOUBLE[6] | | ... |
-| `CIII_BR_ERR` | DOUBLE[6] | | ... |
-| `SIIII1892_ERR` | DOUBLE[6] | | ... |
-| `ALIII1857_ERR` | DOUBLE[6] | | ... |
-| `NIII1750_ERR` | DOUBLE[6] | | ... |
-| `CIV_ERR` | DOUBLE[6] | | ... |
-| `HEII1640_ERR` | DOUBLE[6] | | ... |
-| `HEII1640_BR_ERR` | DOUBLE[6] | | ... |
-| `SIIV_OIV_ERR` | DOUBLE[6] | | ... |
-| `OI1304_ERR` | DOUBLE[6] | | ... |
-| `LYA_ERR` | DOUBLE[6] | | ... |
-| `NV1240_ERR` | DOUBLE[6] | | ... |
-| `NEV3346_ERR` | DOUBLE[6] | | ... |
-| `NEV3426_ERR` | DOUBLE[6] | | ... |
-| `FEVII3586_ERR` | DOUBLE[6] | | ... |
-| `OII3728_ERR` | DOUBLE[6] | | ... |
-| `FEVII3759_ERR` | DOUBLE[6] | | ... |
-| `CAII3934_ERR` | DOUBLE[6] | | ... |
-| `FEXIV5303_ERR` | DOUBLE[6] | | ... |
-| `FEVII5721_ERR` | DOUBLE[6] | | ... |
-| `FEVII6087_ERR` | DOUBLE[6] | | ... |
-| `FEX6374_ERR` | DOUBLE[6] | | ... |
-| `SXII7611_ERR` | DOUBLE[6] | | ... |
-| `FEXI7892_ERR` | DOUBLE[6] | | ... |
-| | | | **Fit statistics** |
-| `Ha_STAT` | DOUBLE[2] | | Number of pixels and reduced $\chi^2$ of the H $\alpha$ complex fit |
-| `Hb_STAT` | DOUBLE[2] | | ... H $\beta$ complex |
-| `HgHd_STAT` | DOUBLE[2] | | ... H $\gamma$ + H $\delta$ complex |
-| `MgII_STAT` | DOUBLE[2] | | ... MgII complex |
-| `CIII_STAT` | DOUBLE[2] | | ... CIII] complex |
-| `CIV_STAT` | DOUBLE[2] | | ... CIV complex |
-| `SiIV_STAT` | DOUBLE[2] | | ... SiIV complex |
-| `Lya_STAT` | DOUBLE[2] | | ... Ly $\alpha$ complex |
-| `NEV3346_STAT` | DOUBLE[2] | | Number of pixels and reduced $\chi^2$ of the [NeV] λ3346 local fit |
-| `NeV_STAT` | DOUBLE[2] | | ... [NeV] λ3426 local fit |
-| `FEVII3586_STAT` | DOUBLE[2] | | ... [FeVII] λ3586 local fit |
-| `OII_STAT` | DOUBLE[2] | | ... [OII] local fit |
-| `FEVII3759_STAT` | DOUBLE[2] | | ... [FeVII] λ3759 local fit |
-| `CaII_STAT` | DOUBLE[2] | | ... CaII K local fit |
-| `FEXIV5303_STAT` | DOUBLE[2] | | ... [FeXIV] λ5303 local fit |
-| `FEVII5721_STAT` | DOUBLE[2] | | ... [FeVII] λ5721 local fit |
-| `FEVII6087_STAT` | DOUBLE[2] | | ... [FeVII] λ6087 local fit |
-| `FEX6374_STAT` | DOUBLE[2] | | ... [FeX] λ6374 local fit |
-| `SXII7611_STAT` | DOUBLE[2] | | ... [SXII] λ7611 local fit |
-| `FEXI7892_STAT` | DOUBLE[2] | | ... [FeXI] λ7892 local fit |
-| `CIV_FWHM_MOD` | DOUBLE[2] | km s $^{-1}$ | FWHM of broad CIV after rejecting Gaussian components that contribute <5% of the broad-line flux, and its uncertainty (used for `LOGMBH_CIV`) |
-| | | | **Derived quantities** |
-| `LOGLBOL` | DOUBLE | [erg s $^{-1}$] | Bolometric luminosity |
-| `LOGLBOL_ERR` | DOUBLE | [erg s $^{-1}$] | Uncertainty in `LOGLBOL` |
-| `LOGMBH_HB` | DOUBLE | [M $_\odot$] | Single-epoch BH mass based on H $\beta$ |
-| `LOGMBH_HB_ERR` | DOUBLE | [M $_\odot$] | Uncertainty in `LOGMBH_HB` |
-| `LOGMBH_MGII` | DOUBLE | [M $_\odot$] | Single-epoch BH mass based on MgII |
-| `LOGMBH_MGII_ERR` | DOUBLE | [M $_\odot$] | ... |
-| `LOGMBH_CIV` | DOUBLE | [M $_\odot$] | Single-epoch BH mass based on CIV |
-| `LOGMBH_CIV_ERR` | DOUBLE | [M $_\odot$] | ... |
-| `LOGMBH` | DOUBLE | [M $_\odot$] | Fiducial single-epoch BH mass |
-| `LOGMBH_ERR` | DOUBLE | [M $_\odot$] | ... |
-| `LOGLLEDD_RATIO` | DOUBLE | | Eddington ratio based on the fiducial BH mass |
-| `LOGLLEDD_RATIO_ERR` | DOUBLE | | Uncertainty in `LOGLLEDD_RATIO` |
-| `BAL_FLAG` | INT16 | | BAL flag from the CIV balnicity index: 1 = BAL (BI>0), 0 = non-BAL, −1 = not in the DESI QSO catalog (main/dark, $z>1.57$ only) |
+| Column                 | Format    | Units                                                                                    | Description                                                                                                                                     |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SURVEY`             | STRING    |                                                                                          | Survey name                                                                                                                                     |
+| `PROGRAM`            | STRING    |                                                                                          | DESI program type                                                                                                                               |
+| `HEALPIX`            | INT32     |                                                                                          | HEALPix number                                                                                                                                  |
+| `TARGETID`           | INT64     |                                                                                          | Unique identifier for each object observed by DESI                                                                                              |
+| `Z_AGNCAT`           | DOUBLE    |                                                                                          | Redshift provided by the DESI pipeline (AGN/QSO VAC)                                                                                            |
+| `Z_LYA`              | DOUBLE    |                                                                                          | Redshift from the Ly $\alpha$ Y1 BAO analysis (−1 if not available)                                                                          |
+| `OBJID`              | STRING    |                                                                                          | Object identifier SURVEY-PROGRAM-HEALPIX-TARGETID; PyQSOFit output name                                                                         |
+| `RA`                 | DOUBLE    | degree                                                                                   | Right ascension (J2000)                                                                                                                         |
+| `DEC`                | DOUBLE    | degree                                                                                   | Declination (J2000)                                                                                                                             |
+| `IN_SDSS_DR16Q`      | INT16     |                                                                                          | 1 if cross-matched to SDSS DR16Q within 0.5″, 0 otherwise                                                                                      |
+| `SDSS_DR16Q_OBJID`   | STRING    |                                                                                          | SDSS DR16Q object identifier (NA if no match)                                                                                                   |
+| `Z_FIT`              | DOUBLE    |                                                                                          | Input redshift for PyQSOFit (DESI pipeline redshift, Ly $\alpha$ BAO redshift where available)                                                |
+| `Z_SYS`              | DOUBLE    |                                                                                          | Final systemic redshift (equals `Z_FIT` where `Z_SYS_ERR` = −1)                                                                            |
+| `Z_SYS_ERR`          | DOUBLE    |                                                                                          | Uncertainty in `Z_SYS` (−1 if `Z_FIT` is adopted)                                                                                          |
+| `Z_SYS_LINES`        | DOUBLE[8] |                                                                                          | Systemic redshift from individual lines: broad H $\beta$, [OIII], CaII, [OII], MgII, broad CIII], CIV, SiIV                                   |
+| `Z_SYS_LINES_ERR`    | DOUBLE[8] |                                                                                          | Uncertainties in `Z_SYS_LINES`                                                                                                                |
+| `SN_RATIO_CONTI`     | DOUBLE    |                                                                                          | Median S/N in the continuum windows                                                                                                             |
+| `SNR_ALL_MEDIAN`     | DOUBLE    |                                                                                          | Median S/N per pixel over the full spectrum                                                                                                     |
+| `EBV`                | DOUBLE    | mag                                                                                      | Milky Way extinction $E(B-V)$ from Schlegel et al. (1998)                                                                                     |
+| `CONTI_PARA`         | DOUBLE[5] |                                                                                          | Best-fit continuum parameters: PL normalization, PL slope, and polynomial coefficients $a_0, a_1, a_2$                                        |
+| `CONTI_PARA_ERR`     | DOUBLE[5] |                                                                                          | Uncertainties in `CONTI_PARA`                                                                                                                 |
+| `FE_UV_OPT_PARA`     | DOUBLE[6] |                                                                                          | Best-fit UV and optical FeII template parameters: (normalization, FWHM, shift) for UV, then optical                                             |
+| `FE_UV_OPT_PARA_ERR` | DOUBLE[6] |                                                                                          | Uncertainties in `FE_UV_OPT_PARA`                                                                                                             |
+| `FE_UV_EW`           | DOUBLE[2] | Å                                                                                       | Rest-frame EW of UV FeII within 2250–2650 Å, and its uncertainty                                                                              |
+| `FE_OPT_EW`          | DOUBLE[2] | Å                                                                                       | Rest-frame EW of optical FeII within 4434–4684 Å, and its uncertainty                                                                         |
+| `LOGL1350`           | DOUBLE    | [erg s $^{-1}$]                                                                        | Continuum luminosity $\log\lambda L_\lambda$ at rest-frame 1350 Å                                                                            |
+| `LOGL1350_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | Uncertainty in `LOGL1350`                                                                                                                     |
+| `LOGL1700`           | DOUBLE    | [erg s $^{-1}$]                                                                        | ... at 1700 Å                                                                                                                                  |
+| `LOGL1700_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | ...                                                                                                                                             |
+| `LOGL2500`           | DOUBLE    | [erg s $^{-1}$]                                                                        | ... at 2500 Å                                                                                                                                  |
+| `LOGL2500_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | ...                                                                                                                                             |
+| `LOGL3000`           | DOUBLE    | [erg s $^{-1}$]                                                                        | ... at 3000 Å                                                                                                                                  |
+| `LOGL3000_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | ...                                                                                                                                             |
+| `LOGL4200`           | DOUBLE    | [erg s $^{-1}$]                                                                        | ... at 4200 Å (host-subtracted at $z<1$)                                                                                                     |
+| `LOGL4200_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | ...                                                                                                                                             |
+| `LOGL5100`           | DOUBLE    | [erg s $^{-1}$]                                                                        | ... at 5100 Å (host-subtracted at $z<1$)                                                                                                     |
+| `LOGL5100_ERR`       | DOUBLE    | [erg s $^{-1}$]                                                                        | ...                                                                                                                                             |
+| `CONTI_FIT_STAT`     | DOUBLE[2] |                                                                                          | Number of pixels and reduced $\chi^2$ of the continuum fit                                                                                    |
+| `FRAC_HOST_4200`     | DOUBLE    |                                                                                          | Host-galaxy fraction at rest-frame 4200 Å                                                                                                      |
+| `FRAC_HOST_5100`     | DOUBLE    |                                                                                          | Host-galaxy fraction at rest-frame 5100 Å                                                                                                      |
+| `DN4000`             | DOUBLE    |                                                                                          | $D_{\rm n}4000$ index of the host galaxy                                                                                                      |
+| `HOST_DECOMP_PARA`   | DOUBLE[5] |                                                                                          | Coefficients of the five galaxy eigenspectra used in the host decomposition                                                                     |
+|                        |           | Å, $10^{-17}$ erg s $^{-1}$ cm $^{-2}$, [erg s $^{-1}$], km s $^{-1}$, Å, Å | **Peak wavelength, flux, $\log L_{\rm line}$, FWHM, rest-frame EW, 50% flux centroid wavelength**                                       |
+| `HALPHA`             | DOUBLE[6] |                                                                                          | For the entire H $\alpha$ profile (narrow and broad combined)                                                                                 |
+| `HALPHA_BR`          | DOUBLE[6] |                                                                                          | For the broad H $\alpha$ component                                                                                                            |
+| `HALPHA_NA`          | DOUBLE[6] |                                                                                          | For the narrow H $\alpha$ component                                                                                                           |
+| `NII6549`            | DOUBLE[6] |                                                                                          | For the narrow [NII] λ6549 component                                                                                                           |
+| `NII6585`            | DOUBLE[6] |                                                                                          | For the narrow [NII] λ6585 component                                                                                                           |
+| `SII6718`            | DOUBLE[6] |                                                                                          | For the narrow [SII] λ6718 component                                                                                                           |
+| `SII6732`            | DOUBLE[6] |                                                                                          | For the narrow [SII] λ6732 component                                                                                                           |
+| `HBETA`              | DOUBLE[6] |                                                                                          | For the entire H $\beta$ profile (narrow and broad combined)                                                                                  |
+| `HBETA_BR`           | DOUBLE[6] |                                                                                          | For the broad H $\beta$ component                                                                                                             |
+| `HBETA_NA`           | DOUBLE[6] |                                                                                          | For the narrow H $\beta$ component ($z<1.02$ only)                                                                                          |
+| `HEII4687`           | DOUBLE[6] |                                                                                          | For the entire HeII λ4687 profile (narrow and broad combined)                                                                                  |
+| `HEII4687_BR`        | DOUBLE[6] |                                                                                          | For the broad HeII λ4687 component                                                                                                             |
+| `OIII5007`           | DOUBLE[6] |                                                                                          | For the entire [OIII] λ5007 profile (core and wing)                                                                                            |
+| `OIII5007C`          | DOUBLE[6] |                                                                                          | For the core [OIII] λ5007 profile                                                                                                              |
+| `OIII4960`           | DOUBLE[6] |                                                                                          | For the entire [OIII] λ4960 profile (core and wing)                                                                                            |
+| `OIII4960C`          | DOUBLE[6] |                                                                                          | For the core [OIII] λ4960 profile                                                                                                              |
+| `HGAMMA`             | DOUBLE[6] |                                                                                          | For the entire H $\gamma$ profile (narrow and broad combined)                                                                                 |
+| `HDELTA`             | DOUBLE[6] |                                                                                          | For the entire H $\delta$ profile (narrow and broad combined)                                                                                 |
+| `MGII`               | DOUBLE[6] |                                                                                          | For the entire MgII profile (narrow and broad combined)                                                                                         |
+| `MGII_BR`            | DOUBLE[6] |                                                                                          | For the broad MgII component                                                                                                                    |
+| `CIII_BR`            | DOUBLE[6] |                                                                                          | For the broad CIII] component                                                                                                                   |
+| `SIIII1892`          | DOUBLE[6] |                                                                                          | For SiIII] λ1892                                                                                                                               |
+| `ALIII1857`          | DOUBLE[6] |                                                                                          | For AlIII λ1857                                                                                                                                |
+| `NIII1750`           | DOUBLE[6] |                                                                                          | For NIII] λ1750                                                                                                                                |
+| `CIV`                | DOUBLE[6] |                                                                                          | For the entire CIV profile                                                                                                                      |
+| `HEII1640`           | DOUBLE[6] |                                                                                          | For the entire HeII λ1640 profile (narrow and broad combined)                                                                                  |
+| `HEII1640_BR`        | DOUBLE[6] |                                                                                          | For the broad HeII λ1640 component                                                                                                             |
+| `SIIV_OIV`           | DOUBLE[6] |                                                                                          | For the 1400 Å complex (SiIV + OIV])                                                                                                           |
+| `OI1304`             | DOUBLE[6] |                                                                                          | For OI λ1304                                                                                                                                   |
+| `LYA`                | DOUBLE[6] |                                                                                          | For Ly $\alpha$                                                                                                                               |
+| `NV1240`             | DOUBLE[6] |                                                                                          | For NV λ1240                                                                                                                                   |
+| `NEV3346`            | DOUBLE[6] |                                                                                          | Local fit (linear continuum + one Gaussian) of [NeV] λ3346                                                                                     |
+| `NEV3426`            | DOUBLE[6] |                                                                                          | Local fit of [NeV] λ3426                                                                                                                       |
+| `FEVII3586`          | DOUBLE[6] |                                                                                          | Local fit of [FeVII] λ3586                                                                                                                     |
+| `OII3728`            | DOUBLE[6] |                                                                                          | Local fit of [OII] λλ3727,3729                                                                                                                |
+| `FEVII3759`          | DOUBLE[6] |                                                                                          | Local fit of [FeVII] λ3759                                                                                                                     |
+| `CAII3934`           | DOUBLE[6] |                                                                                          | Local fit of the CaII K absorption line (negative flux and EW)                                                                                  |
+| `FEXIV5303`          | DOUBLE[6] |                                                                                          | Local fit of [FeXIV] λ5303                                                                                                                     |
+| `FEVII5721`          | DOUBLE[6] |                                                                                          | Local fit of [FeVII] λ5721                                                                                                                     |
+| `FEVII6087`          | DOUBLE[6] |                                                                                          | Local fit of [FeVII] λ6087                                                                                                                     |
+| `FEX6374`            | DOUBLE[6] |                                                                                          | Local fit of [FeX] λ6374                                                                                                                       |
+| `SXII7611`           | DOUBLE[6] |                                                                                          | Local fit of [SXII] λ7611                                                                                                                      |
+| `FEXI7892`           | DOUBLE[6] |                                                                                          | Local fit of [FeXI] λ7892                                                                                                                      |
+|                        |           |                                                                                          | **Uncertainties in the line properties above**                                                                                            |
+| `HALPHA_ERR`         | DOUBLE[6] |                                                                                          | Uncertainties in `HALPHA`                                                                                                                     |
+| `HALPHA_BR_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HALPHA_NA_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NII6549_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NII6585_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `SII6718_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `SII6732_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HBETA_ERR`          | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HBETA_BR_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HBETA_NA_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HEII4687_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HEII4687_BR_ERR`    | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OIII5007_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OIII5007C_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OIII4960_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OIII4960C_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HGAMMA_ERR`         | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HDELTA_ERR`         | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `MGII_ERR`           | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `MGII_BR_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `CIII_BR_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `SIIII1892_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `ALIII1857_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NIII1750_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `CIV_ERR`            | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HEII1640_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `HEII1640_BR_ERR`    | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `SIIV_OIV_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OI1304_ERR`         | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `LYA_ERR`            | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NV1240_ERR`         | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NEV3346_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `NEV3426_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEVII3586_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `OII3728_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEVII3759_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `CAII3934_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEXIV5303_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEVII5721_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEVII6087_ERR`      | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEX6374_ERR`        | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `SXII7611_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+| `FEXI7892_ERR`       | DOUBLE[6] |                                                                                          | ...                                                                                                                                             |
+|                        |           |                                                                                          | **Fit statistics**                                                                                                                        |
+| `Ha_STAT`            | DOUBLE[2] |                                                                                          | Number of pixels and reduced $\chi^2$ of the H $\alpha$ complex fit                                                                         |
+| `Hb_STAT`            | DOUBLE[2] |                                                                                          | ... H $\beta$ complex                                                                                                                         |
+| `HgHd_STAT`          | DOUBLE[2] |                                                                                          | ... H $\gamma$ + H $\delta$ complex                                                                                                         |
+| `MgII_STAT`          | DOUBLE[2] |                                                                                          | ... MgII complex                                                                                                                                |
+| `CIII_STAT`          | DOUBLE[2] |                                                                                          | ... CIII] complex                                                                                                                               |
+| `CIV_STAT`           | DOUBLE[2] |                                                                                          | ... CIV complex                                                                                                                                 |
+| `SiIV_STAT`          | DOUBLE[2] |                                                                                          | ... SiIV complex                                                                                                                                |
+| `Lya_STAT`           | DOUBLE[2] |                                                                                          | ... Ly $\alpha$ complex                                                                                                                       |
+| `NEV3346_STAT`       | DOUBLE[2] |                                                                                          | Number of pixels and reduced $\chi^2$ of the [NeV] λ3346 local fit                                                                           |
+| `NeV_STAT`           | DOUBLE[2] |                                                                                          | ... [NeV] λ3426 local fit                                                                                                                      |
+| `FEVII3586_STAT`     | DOUBLE[2] |                                                                                          | ... [FeVII] λ3586 local fit                                                                                                                    |
+| `OII_STAT`           | DOUBLE[2] |                                                                                          | ... [OII] local fit                                                                                                                             |
+| `FEVII3759_STAT`     | DOUBLE[2] |                                                                                          | ... [FeVII] λ3759 local fit                                                                                                                    |
+| `CaII_STAT`          | DOUBLE[2] |                                                                                          | ... CaII K local fit                                                                                                                            |
+| `FEXIV5303_STAT`     | DOUBLE[2] |                                                                                          | ... [FeXIV] λ5303 local fit                                                                                                                    |
+| `FEVII5721_STAT`     | DOUBLE[2] |                                                                                          | ... [FeVII] λ5721 local fit                                                                                                                    |
+| `FEVII6087_STAT`     | DOUBLE[2] |                                                                                          | ... [FeVII] λ6087 local fit                                                                                                                    |
+| `FEX6374_STAT`       | DOUBLE[2] |                                                                                          | ... [FeX] λ6374 local fit                                                                                                                      |
+| `SXII7611_STAT`      | DOUBLE[2] |                                                                                          | ... [SXII] λ7611 local fit                                                                                                                     |
+| `FEXI7892_STAT`      | DOUBLE[2] |                                                                                          | ... [FeXI] λ7892 local fit                                                                                                                     |
+| `CIV_FWHM_MOD`       | DOUBLE[2] | km s $^{-1}$                                                                           | FWHM of broad CIV after rejecting Gaussian components that contribute <5% of the broad-line flux, and its uncertainty (used for `LOGMBH_CIV`) |
+|                        |           |                                                                                          | **Derived quantities**                                                                                                                    |
+| `LOGLBOL`            | DOUBLE    | [erg s $^{-1}$]                                                                        | Bolometric luminosity                                                                                                                           |
+| `LOGLBOL_ERR`        | DOUBLE    | [erg s $^{-1}$]                                                                        | Uncertainty in `LOGLBOL`                                                                                                                      |
+| `LOGMBH_HB`          | DOUBLE    | [M $_\odot$]                                                                           | Single-epoch BH mass based on H $\beta$                                                                                                       |
+| `LOGMBH_HB_ERR`      | DOUBLE    | [M $_\odot$]                                                                           | Uncertainty in `LOGMBH_HB`                                                                                                                    |
+| `LOGMBH_MGII`        | DOUBLE    | [M $_\odot$]                                                                           | Single-epoch BH mass based on MgII                                                                                                              |
+| `LOGMBH_MGII_ERR`    | DOUBLE    | [M $_\odot$]                                                                           | ...                                                                                                                                             |
+| `LOGMBH_CIV`         | DOUBLE    | [M $_\odot$]                                                                           | Single-epoch BH mass based on CIV                                                                                                               |
+| `LOGMBH_CIV_ERR`     | DOUBLE    | [M $_\odot$]                                                                           | ...                                                                                                                                             |
+| `LOGMBH`             | DOUBLE    | [M $_\odot$]                                                                           | Fiducial single-epoch BH mass                                                                                                                   |
+| `LOGMBH_ERR`         | DOUBLE    | [M $_\odot$]                                                                           | ...                                                                                                                                             |
+| `LOGLLEDD_RATIO`     | DOUBLE    |                                                                                          | Eddington ratio based on the fiducial BH mass                                                                                                   |
+| `LOGLLEDD_RATIO_ERR` | DOUBLE    |                                                                                          | Uncertainty in `LOGLLEDD_RATIO`                                                                                                               |
+| `BAL_FLAG`           | INT16     |                                                                                          | BAL flag from the CIV balnicity index: 1 = BAL (BI>0), 0 = non-BAL, −1 = not in the DESI QSO catalog (main/dark, $z>1.57$ only)              |
 
 ### Derived quantities
 
